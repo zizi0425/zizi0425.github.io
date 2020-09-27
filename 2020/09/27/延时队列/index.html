@@ -15,7 +15,7 @@
 <meta property="og:description" content="项目背景 客户的数据不推送到我们服务中,创建配送单的方式是手动拉他们的数据创建配送单;门店有一个制作时间,因此会设置一个延迟推送时间(可配置); 如下单6分钟后该创建该运单的配送单  历史做法 创建一个定时任务; 1分钟拉取一次数据; 将符合条件的数据设置超时时间放到一个无消费者的队列中 队列延时时间到了之后, 丢入死信队列中 死信队列的消费者会先查该运单是否创建过(因为6分钟可能被拉取到6次);">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-09-27T02:32:42.000Z">
-<meta property="article:modified_time" content="2020-09-27T03:16:00.223Z">
+<meta property="article:modified_time" content="2020-09-27T03:35:01.212Z">
 <meta property="article:author" content="踩踩">
 <meta name="twitter:card" content="summary">
   
@@ -101,17 +101,7 @@
 <li>2.逻辑已经上线N个月了; 我刚接手一个月说这个时间不准确; 延迟6分钟; 但是他们看到的是超过了6分钟多了几秒; 感觉在欺负我一样</li>
 <li>3.代码太乱了; 因为每一个延迟时间就创建两个队列; 在声明的类中代码太长;接手就发现7分钟的延迟对了用的是五分钟的配置.查问题不好查</li>
 </ul>
-<h2 id="改造"><a href="#改造" class="headerlink" title="改造"></a>改造</h2><h3 id="方式1-客户需要配合"><a href="#方式1-客户需要配合" class="headerlink" title="方式1(客户需要配合):"></a>方式1(客户需要配合):</h3><ul>
-<li>要求:<blockquote>
-<p>1.mq版本升级到3.6以上 (项目已支持)<br>2.安装动态延迟队列插件:  rabbitmq_delayed_message_exchange</p>
-</blockquote>
-</li>
-</ul>
-<p>不需要创建很多队列; 用一个队列来实现,每一个消息设置延迟时间,<br>不升级插件消息会按照丢入顺序消费; 也就是说先丢入6分钟延迟,在丢失1分钟延迟; 那么6分钟必须先消费后才可以消费1分钟的,所以必须升级插件<br>发送端代码:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  rabbitTemplate.convertAndSend(orderPushDlEnum.getExchageName(),orderPushDlEnum.getRoutingName(),dto,message -&gt; &#123;</span><br><span class="line">                        log.info(&quot;延时 &#123;&#125; 分钟推送: &#123;&#125;&quot;, orderPushDlEnum.getDlTime(), JSONObject.toJSONString(dto));</span><br><span class="line">                        Integer dlTime &#x3D; orderPushDlEnum.getDlTime() * 60 * 1000;</span><br><span class="line">                        message.getMessageProperties().setExpiration(String.valueOf(dlTime));</span><br><span class="line">                        return message;</span><br><span class="line">                    &#125;);</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="方式2-客户需要配合"><a href="#方式2-客户需要配合" class="headerlink" title="方式2(客户需要配合)"></a>方式2(客户需要配合)</h3><ul>
+<h2 id="改造"><a href="#改造" class="headerlink" title="改造"></a>改造</h2><h3 id="方式1-客户需要配合"><a href="#方式1-客户需要配合" class="headerlink" title="方式1(客户需要配合)"></a>方式1(客户需要配合)</h3><ul>
 <li>要求:<blockquote>
 <p>1.mq版本升级到3.6以上 (项目已支持)<br>2.安装动态延迟队列插件:  rabbitmq_delayed_message_exchange</p>
 </blockquote>
@@ -121,13 +111,12 @@
 <li>创建队列<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    @Bean</span><br><span class="line">    CustomExchange multipleDelayExchange()&#123;</span><br><span class="line">        Map&lt;String, Object&gt; args &#x3D; new HashMap&lt;&gt;();</span><br><span class="line">        args.put(&quot;x-delayed-type&quot;, &quot;direct&quot;);</span><br><span class="line">        return new CustomExchange(DELAY_EXCHANGE, &quot;x-delayed-message&quot;, true, false, args);</span><br><span class="line">    &#125;</span><br><span class="line">    @Bean</span><br><span class="line">    Queue multipleDelayQueue() &#123;</span><br><span class="line">        return new Queue(DELAY_QUEUE, true);</span><br><span class="line">    &#125;</span><br><span class="line">    @Bean</span><br><span class="line">    Binding multipleDelayBinding() &#123;</span><br><span class="line">        return BindingBuilder.bind(multipleDelayQueue())</span><br><span class="line">                .to(multipleDelayExchange())</span><br><span class="line">                .with(DELAY_ROUTING)</span><br><span class="line">                .noargs();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
 <li>消费者<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">    @RabbitListener(queues &#x3D; MultiplexDlConfig.DELAY_QUEUE)</span><br><span class="line">    public void consumer(String msg, Message message) &#123;</span><br><span class="line">        log.info(&quot;当前时间: &#123;&#125; ,message : &#123;&#125; &quot;, LocalDateTime.now(), message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
 <li>发送端<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">    @PostMapping(&quot;&#x2F;send&quot;)</span><br><span class="line">    public ResponseEntity&lt;String&gt; multipleDlSendMsg(@RequestBody MultipleDlRequest multipleDlRequest) &#123;</span><br><span class="line">        rabbitTemplate.convertAndSend(MultiplexDlConfig.DELAY_EXCHANGE, MultiplexDlConfig.DELAY_ROUTING, multipleDlRequest.getMessage(), msg -&gt; &#123;</span><br><span class="line">            log.info(&quot;当前时间: &#123;&#125; ,msg : &#123;&#125; &quot;, LocalDateTime.now(), msg);</span><br><span class="line">            Integer delayTime &#x3D; multipleDlRequest.getDlTime() * 1000;</span><br><span class="line">            msg.getMessageProperties().setHeader(&quot;x-delay&quot;, delayTime);</span><br><span class="line">            return msg;</span><br><span class="line">        &#125;);</span><br><span class="line">        return ResponseEntity.ok(&quot;ok&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="方式3-客户不配合"><a href="#方式3-客户不配合" class="headerlink" title="方式3(客户不配合)"></a>方式3(客户不配合)</h3></li>
+<h3 id="方式2-客户不配合"><a href="#方式2-客户不配合" class="headerlink" title="方式2(客户不配合)"></a>方式2(客户不配合)</h3></li>
 <li>客户要是配合的话也不会出现定时拉取他们数据这种情况, 所以上面的是主要方案; 这个是备选方案</li>
 <li><a target="_blank" rel="noopener" href="https://tech.youzan.com/queuing_delay/">参考地址:有赞延迟队列设计</a><br>demo已经写过; 对于wait/notify因为需求又来了一批;回头尝试下</li>
 </ul>
 <h3 id="总结下延迟队列的实现形式"><a href="#总结下延迟队列的实现形式" class="headerlink" title="总结下延迟队列的实现形式"></a>总结下延迟队列的实现形式</h3><ul>
-<li>不考虑延时的实时性; 使用定时任务丢入队列</li>
-<li>使用mq死信队列</li>
+<li>不考虑延时的实时性; 使用定时任务+死信队列</li>
 <li>使用mq延时队列</li>
 <li>redis的zset来实现延时队列</li>
 </ul>
