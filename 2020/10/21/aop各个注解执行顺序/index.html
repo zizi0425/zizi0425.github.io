@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>aop各个注解执行顺序 | 籽籽要长大了</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="springboot的版本12345-- springboot的版本为id &#39;org.springframework.boot&#39; version &#39;2.3.2.RELEASE&#39;-- aop需要引入implementation &#39;org.springframework.boot:spring-boot-starter-aop&#39;  开始测试aop各个注解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="aop各个注解执行顺序">
+<meta property="og:url" content="http://example.com/2020/10/21/aop%E5%90%84%E4%B8%AA%E6%B3%A8%E8%A7%A3%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/index.html">
+<meta property="og:site_name" content="籽籽要长大了">
+<meta property="og:description" content="springboot的版本12345-- springboot的版本为id &#39;org.springframework.boot&#39; version &#39;2.3.2.RELEASE&#39;-- aop需要引入implementation &#39;org.springframework.boot:spring-boot-starter-aop&#39;  开始测试aop各个注解">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-21T10:34:15.000Z">
+<meta property="article:modified_time" content="2020-10-21T10:36:10.862Z">
+<meta property="article:author" content="踩踩">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="籽籽要长大了" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">籽籽要长大了</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-aop各个注解执行顺序" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/10/21/aop%E5%90%84%E4%B8%AA%E6%B3%A8%E8%A7%A3%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" class="article-date">
+  <time datetime="2020-10-21T10:34:15.000Z" itemprop="datePublished">2020-10-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      aop各个注解执行顺序
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="springboot的版本"><a href="#springboot的版本" class="headerlink" title="springboot的版本"></a>springboot的版本</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- springboot的版本为</span><br><span class="line">id &#39;org.springframework.boot&#39; version &#39;2.3.2.RELEASE&#39;</span><br><span class="line"></span><br><span class="line">-- aop需要引入</span><br><span class="line">implementation &#39;org.springframework.boot:spring-boot-starter-aop&#39;</span><br></pre></td></tr></table></figure>
+
+<p>开始测试aop各个注解对应的执行顺序</p>
+<h1 id="验证的注解"><a href="#验证的注解" class="headerlink" title="验证的注解:"></a>验证的注解:</h1><ul>
+<li>@Before</li>
+<li>@After</li>
+<li>@Around</li>
+<li>@AfterThrowing</li>
+<li>@AfterReturning</li>
+</ul>
+<h1 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h1><h2 id="切面"><a href="#切面" class="headerlink" title="切面"></a>切面</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@Aspect</span><br><span class="line">@Component</span><br><span class="line">public class TrackingNoAop &#123;</span><br><span class="line"></span><br><span class="line">    @Pointcut(&quot;execution(* com.wyj.daily.test_project.controller..*.*(..))&quot;)</span><br><span class="line">    public void aspTrackingNo()&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;2</span><br><span class="line">    @Before(&quot;aspTrackingNo()&quot;)</span><br><span class="line">    public void before(JoinPoint joinPoint) &#123;</span><br><span class="line">        System.out.println(&quot;before&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;4</span><br><span class="line">    @After(&quot;aspTrackingNo()&quot;)</span><br><span class="line">    public void after() &#123;</span><br><span class="line">        System.out.println(&quot;after&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;1</span><br><span class="line">    @Around(&quot;aspTrackingNo()&quot;)</span><br><span class="line">    public void around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;around&quot;);</span><br><span class="line">        Object proceed &#x3D; proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());</span><br><span class="line">        System.out.println(&quot;proceed &#x3D; &quot; + proceed);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;3</span><br><span class="line">    @AfterThrowing(pointcut &#x3D; &quot;aspTrackingNo()&quot;, throwing &#x3D; &quot;e&quot;)</span><br><span class="line">    public void afterThrowing(JoinPoint joinPoint, Exception e) &#123;</span><br><span class="line">        System.out.println(&quot;afterThrowing&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;3</span><br><span class="line">    @AfterReturning(pointcut &#x3D; &quot;aspTrackingNo()&quot;)</span><br><span class="line">    public void afterReturning() &#123;</span><br><span class="line">        System.out.println(&quot;afterReturning &quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="被切的类"><a href="#被切的类" class="headerlink" title="被切的类"></a>被切的类</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;testAop&#x2F;&#123;type&#125;&quot;)</span><br><span class="line">public ResponseEntity&lt;String&gt; testAop(@PathVariable Integer type) &#123;</span><br><span class="line">    if (type &#x3D;&#x3D; 1) &#123;</span><br><span class="line">        throw new RuntimeException();</span><br><span class="line">    &#125;</span><br><span class="line">    return ResponseEntity.ok(&quot;哈哈&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="正常时打印"><a href="#正常时打印" class="headerlink" title="正常时打印"></a>正常时打印</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">around</span><br><span class="line">before</span><br><span class="line">afterReturning </span><br><span class="line">after</span><br><span class="line">proceed &#x3D; &lt;200 OK OK,哈哈,[]&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="抛异常时打印"><a href="#抛异常时打印" class="headerlink" title="抛异常时打印"></a>抛异常时打印</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">around</span><br><span class="line">before</span><br><span class="line">afterThrowing</span><br><span class="line">after</span><br></pre></td></tr></table></figure>
+
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论:"></a>结论:</h1><p>请求-&gt; around开始  -&gt; before -&gt; 执行方法(proceed)-&gt; afterThrowing/afterReturning -&gt;after  -&gt; around 结束</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/10/21/aop%E5%90%84%E4%B8%AA%E6%B3%A8%E8%A7%A3%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" data-id="ckgj9g2ir000024oe0l9g7nd9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/10/15/git/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">git</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/10/21/aop%E5%90%84%E4%B8%AA%E6%B3%A8%E8%A7%A3%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">aop各个注解执行顺序</a>
+          </li>
+        
+          <li>
+            <a href="/2020/10/15/git/">git</a>
+          </li>
+        
+          <li>
+            <a href="/2020/09/27/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/">延时队列的不同实现形式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/09/25/first/">hexo</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 踩踩<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
