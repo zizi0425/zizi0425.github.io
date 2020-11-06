@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>ControllerAdvice失效 | flag than blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="接手了一个项目, 整个项目没有使用过自定义异常,因此自己加入了全局异常处理如下: 1234567891011121314151617181920212223242526272829303132333435363738394041424344package com.freemud.delivery.aop;import com.freemud.delivery.entity.enums.Result">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ControllerAdvice失效">
+<meta property="og:url" content="http://example.com/2020/11/06/ControllerAdvice%E5%A4%B1%E6%95%88/index.html">
+<meta property="og:site_name" content="flag than blog">
+<meta property="og:description" content="接手了一个项目, 整个项目没有使用过自定义异常,因此自己加入了全局异常处理如下: 1234567891011121314151617181920212223242526272829303132333435363738394041424344package com.freemud.delivery.aop;import com.freemud.delivery.entity.enums.Result">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-06T09:19:27.000Z">
+<meta property="article:modified_time" content="2020-11-06T10:03:58.556Z">
+<meta property="article:author" content="踩踩">
+<meta property="article:tag" content="SpringBoot启动时排除某一个Bean的注入">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="flag than blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">flag than blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ControllerAdvice失效" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/11/06/ControllerAdvice%E5%A4%B1%E6%95%88/" class="article-date">
+  <time datetime="2020-11-06T09:19:27.000Z" itemprop="datePublished">2020-11-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ControllerAdvice失效
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>接手了一个项目, 整个项目没有使用过自定义异常,因此自己加入了全局异常处理如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.freemud.delivery.aop;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.freemud.delivery.entity.enums.ResultCodeEnum;</span><br><span class="line"><span class="keyword">import</span> com.freemud.delivery.entity.exception.DeliveryException;</span><br><span class="line"><span class="keyword">import</span> com.freemud.delivery.entity.util.ExceptionUtils;</span><br><span class="line"><span class="keyword">import</span> com.freemud.delivery.entity.vo.ApiResult;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.springframework.validation.ObjectError;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.MethodArgumentNotValidException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ExceptionHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestControllerAdvice;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalExceptionHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(&#123;MethodArgumentNotValidException.class&#125;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ApiResult <span class="title">handler</span><span class="params">(MethodArgumentNotValidException e)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; errorList = e.getBindingResult().getAllErrors()</span><br><span class="line">                .stream()</span><br><span class="line">                .map(ObjectError::getDefaultMessage)</span><br><span class="line">                .map(String::valueOf)</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ApiResult(ResultCodeEnum.PARAM_ERROR, errorList);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(&#123;DeliveryException.class&#125;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ApiResult <span class="title">handler</span><span class="params">(DeliveryException e)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ApiResult(e.getCode(), e.getMessage(), <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(&#123;Exception.class&#125;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ApiResult <span class="title">handler</span><span class="params">(Exception e)</span> </span>&#123;</span><br><span class="line">        log.error(ExceptionUtils.getFullStackTrace(e));</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ApiResult(ResultCodeEnum.SYSTEM_ERROR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用时发现并没有生效,当我故意入参错误时,报错如下:</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2020-11-06 17:51:51,113 WARN deliverycenter (AbstractHandlerExceptionResolver.java:140) Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument at index 0 in method: public com.freemud.delivery.entity.vo.ApiResult&lt;com.freemud.delivery.entity.vo.PageResult&lt;com.freemud.delivery.entity.vo.service.delivery.DeliveryVO&gt;&gt; com.freemud.delivery.service.controller.QueryDeliveryController.queryListByDeliveryStatus(com.freemud.delivery.entity.vo.service.delivery.QueryDeliveryListReqVO), with 1 error(s): [Field error in object &#x27;queryDeliveryListReqVO&#x27; on field &#x27;partnerId&#x27;: rejected value []; codes [NotBlank.queryDeliveryListReqVO.partnerId,NotBlank.partnerId,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [queryDeliveryListReqVO.partnerId,partnerId]; arguments []; default message [partnerId]]; default message [partnerId不能为空]] ]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我在console中搜索我的这个bean时发现这个提示:</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2020-11-06 17:55:52,459 INFO deliverycenter (ExceptionHandlerExceptionResolver.java:288) Detected @ExceptionHandler methods in platformExceptionHandler</span><br><span class="line">2020-11-06 17:55:52,459 INFO deliverycenter (ExceptionHandlerExceptionResolver.java:288) Detected @ExceptionHandler methods in globalExceptionHandler</span><br></pre></td></tr></table></figure>
+
+<p>原来这个服务引入了公司的一个基础包; 这个包里已经有了全局异常; 这个类如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Source code recreated from a .class file by IntelliJ IDEA</span></span><br><span class="line"><span class="comment">// (powered by Fernflower decompiler)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.freemud.framework.exception;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.freemud.framework.constants.SysStatusCode;</span><br><span class="line"><span class="keyword">import</span> com.freemud.framework.result.ApiResult;</span><br><span class="line"><span class="keyword">import</span> com.freemud.framework.util.Utils;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ControllerAdvice;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ExceptionHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ResponseBody;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ControllerAdvice</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PlatformExceptionHandler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PlatformExceptionHandler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(&#123;Exception.class&#125;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ApiResult <span class="title">handleException</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ApiResult(SysStatusCode.SYSTEM_ERROR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(&#123;PlatformException.class&#125;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ApiResult <span class="title">handlePlatformException</span><span class="params">(PlatformException platformException)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Utils.notNull(platformException.getCode()) ? <span class="keyword">new</span> ApiResult(platformException.getCode(), platformException.getMsg()) : <span class="keyword">new</span> ApiResult(SysStatusCode.SYSTEM_ERROR);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我认为这个全局异常处理太差劲了; 完全没办法满足我( 同时我有点不理解了,原来是有自定义异常类的; 但是整个项目从来没有见到过一个使用的地方)</p>
+<p>所以我现在需要做的事情就是让基础jar包的失效,使用我自己的全局异常处理</p>
+<p>这时候在SpringBoot启动类中的排除这一个bean的注入,代码如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(value = &quot;com.free.*&quot;,</span></span><br><span class="line"><span class="meta">        excludeFilters = @ComponentScan.Filter(</span></span><br><span class="line"><span class="meta">                type = FilterType.ASSIGNABLE_TYPE,</span></span><br><span class="line"><span class="meta">                classes = &#123;PlatformExceptionHandler.class&#125;</span></span><br><span class="line"><span class="meta">        ))</span></span><br></pre></td></tr></table></figure>
+
+<p>重启服务,调试成功</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/06/ControllerAdvice%E5%A4%B1%E6%95%88/" data-id="ckh63dm8w0000rcoeggvnbb6o" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot%E5%90%AF%E5%8A%A8%E6%97%B6%E6%8E%92%E9%99%A4%E6%9F%90%E4%B8%80%E4%B8%AABean%E7%9A%84%E6%B3%A8%E5%85%A5/" rel="tag">SpringBoot启动时排除某一个Bean的注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/10/28/springretry/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">springretry</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot%E5%90%AF%E5%8A%A8%E6%97%B6%E6%8E%92%E9%99%A4%E6%9F%90%E4%B8%80%E4%B8%AABean%E7%9A%84%E6%B3%A8%E5%85%A5/" rel="tag">SpringBoot启动时排除某一个Bean的注入</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SpringBoot%E5%90%AF%E5%8A%A8%E6%97%B6%E6%8E%92%E9%99%A4%E6%9F%90%E4%B8%80%E4%B8%AABean%E7%9A%84%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SpringBoot启动时排除某一个Bean的注入</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/11/06/ControllerAdvice%E5%A4%B1%E6%95%88/">ControllerAdvice失效</a>
+          </li>
+        
+          <li>
+            <a href="/2020/10/28/springretry/">springretry</a>
+          </li>
+        
+          <li>
+            <a href="/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/">log打印时增加链路id</a>
+          </li>
+        
+          <li>
+            <a href="/2020/10/15/git/">git</a>
+          </li>
+        
+          <li>
+            <a href="/2020/09/27/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/">延时队列的不同实现形式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 踩踩<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
