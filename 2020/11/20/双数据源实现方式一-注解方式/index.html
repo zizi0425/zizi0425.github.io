@@ -7,14 +7,17 @@
   
   <title>双数据源实现方式一-注解方式 | flag than blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="[toc] 结论放前面目前我知道两种实现双数据源的方式; 实现难度都不大,先把个人的结论写前面  通过aop + 注解的形式在切面切换数据源实现 优势: 对本身的代码分层没有任何变化.即两个数据源对应的entity&#x2F;repository不变 劣势: aop切父类方法会失效;即:如果使用通用mapper则会导致父类方法没切到   通过不同数据源扫描不同的包实现 优势: 只关心实体类对应包即可,不需要">
+<meta property="og:type" content="article">
 <meta property="og:title" content="双数据源实现方式一-注解方式">
 <meta property="og:url" content="http://example.com/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F/index.html">
 <meta property="og:site_name" content="flag than blog">
+<meta property="og:description" content="[toc] 结论放前面目前我知道两种实现双数据源的方式; 实现难度都不大,先把个人的结论写前面  通过aop + 注解的形式在切面切换数据源实现 优势: 对本身的代码分层没有任何变化.即两个数据源对应的entity&#x2F;repository不变 劣势: aop切父类方法会失效;即:如果使用通用mapper则会导致父类方法没切到   通过不同数据源扫描不同的包实现 优势: 只关心实体类对应包即可,不需要">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-11-19T16:35:21.000Z">
-<meta property="article:modified_time" content="2020-11-19T16:35:21.635Z">
+<meta property="article:published_time" content="2020-11-20T10:19:20.000Z">
+<meta property="article:modified_time" content="2020-11-20T13:33:59.867Z">
 <meta property="article:author" content="踩踩">
+<meta property="article:tag" content="db">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="flag than blog" type="application/atom+xml">
@@ -67,7 +70,7 @@
         <section id="main"><article id="post-双数据源实现方式一-注解方式" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F/" class="article-date">
-  <time datetime="2020-11-19T16:35:21.000Z" itemprop="datePublished">2020-11-20</time>
+  <time datetime="2020-11-20T10:19:20.000Z" itemprop="datePublished">2020-11-20</time>
 </a>
     
   </div>
@@ -86,32 +89,63 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>[toc]</p>
+<h3 id="结论放前面"><a href="#结论放前面" class="headerlink" title="结论放前面"></a>结论放前面</h3><p>目前我知道两种实现双数据源的方式; 实现难度都不大,先把个人的结论写前面</p>
+<ul>
+<li>通过aop + 注解的形式在切面切换数据源实现<ul>
+<li>优势: 对本身的代码分层没有任何变化.即两个数据源对应的entity/repository不变</li>
+<li>劣势: aop切父类方法会失效;即:如果使用通用mapper则会导致父类方法没切到</li>
+</ul>
+</li>
+<li>通过不同数据源扫描不同的包实现<ul>
+<li>优势: 只关心实体类对应包即可,不需要额外增加注解</li>
+<li>劣势:有一定的侵入; 比如原本dao在repository包下,现在需要再建一个;比如原先的迁移到dao.primary包下; 第二数据源放在dao.second包下</li>
+</ul>
+</li>
+</ul>
+<h2 id="第一种方式-aop-注解"><a href="#第一种方式-aop-注解" class="headerlink" title="第一种方式: aop+注解"></a>第一种方式: <strong>aop+注解</strong></h2><p><strong>流程效果</strong> : 调用repository层方法前;通过切面切换数据源; 直接撸代码</p>
+<h3 id="step1-增加注解"><a href="#step1-增加注解" class="headerlink" title="step1 增加注解:"></a>step1 增加注解:</h3><p>因为一个repository类不应该同时对应两个数据库; 应该注解指定定义类使用即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(value = &#123;ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> DataSourceType &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">DBTypeEnum <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> DBTypeEnum.PRIMARY</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同时定义下两种不同数据源的枚举</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">DBTypeEnum</span> </span>&#123;</span><br><span class="line">    PRIMARY(<span class="string">&quot;primaryDb&quot;</span>),</span><br><span class="line">    LOG(<span class="string">&quot;logDb&quot;</span>),;</span><br><span class="line">    <span class="keyword">private</span> String dbName;</span><br><span class="line">    DBTypeEnum(String dbName) &#123;</span><br><span class="line">        <span class="keyword">this</span>.dbName = dbName;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="step2-动态数据源"><a href="#step2-动态数据源" class="headerlink" title="step2 动态数据源"></a>step2 动态数据源</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.datasource.druid.url</span>=<span class="string">jdbc:mysql://127.0.0.1:3306/sharding_0?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false&amp;serverTimezone=UTC</span></span><br><span class="line"><span class="meta">spring.datasource.druid.username</span>=<span class="string">root</span></span><br><span class="line"><span class="meta">spring.datasource.druid.password</span>=<span class="string">root</span></span><br><span class="line"><span class="meta">spring.datasource.druid.driver-class-name</span>=<span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line"></span><br><span class="line"><span class="meta">spring.datasource.log.url</span>=<span class="string">jdbc:mysql://127.0.0.1:3306/sharding_1?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false&amp;serverTimezone=UTC</span></span><br><span class="line"><span class="meta">spring.datasource.log.username</span>=<span class="string">root</span></span><br><span class="line"><span class="meta">spring.datasource.log.password</span>=<span class="string">root</span></span><br><span class="line"><span class="meta">spring.datasource.log.driver-class-name</span>=<span class="string">com.mysql.cj.jdbc.Driver</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@Primary</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(&quot;spring.datasource.druid&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">primaryDb</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> DruidDataSourceBuilder.create().build();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(&quot;spring.datasource.log&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">logDb</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> DruidDataSourceBuilder.create().build();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DynamicDataSource <span class="title">dynamicDataSource</span><span class="params">(<span class="meta">@Qualifier(&quot;primaryDb&quot;)</span> DataSource primaryDb,</span></span></span><br><span class="line"><span class="function"><span class="params">                                           <span class="meta">@Qualifier(&quot;logDb&quot;)</span> DataSource logDb)</span> </span>&#123;</span><br><span class="line">    Map&lt;Object, Object&gt; targetDataSources = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    targetDataSources.put(DBTypeEnum.PRIMARY, primaryDb);</span><br><span class="line">    targetDataSources.put(DBTypeEnum.LOG, logDb);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DynamicDataSource(primaryDb, targetDataSources);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 低版本中SqlSessionFactory会自动注入; 高版本取消了sqlsessionfactory的自动注入; 需要自己手动注入</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> dynamicDataSource</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">sqlSessionFactory</span><span class="params">(DynamicDataSource dynamicDataSource)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> SqlSessionFactoryBean sessionFactory = <span class="keyword">new</span> SqlSessionFactoryBean();</span><br><span class="line">    sessionFactory.setDataSource(dynamicDataSource);</span><br><span class="line">    <span class="keyword">return</span> sessionFactory.getObject();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class DynamicDataSource extends AbstractRoutingDataSource &#123;</span><br><span class="line">    private static final ThreadLocal&lt;DBTypeEnum&gt; DB_HOLDER &#x3D; new ThreadLocal&lt;&gt;();</span><br><span class="line">    public DynamicDataSource(DataSource defaultTargetDataSource, Map&lt;Object, Object&gt; targetDataSource) &#123;</span><br><span class="line">        super.setDefaultTargetDataSource(defaultTargetDataSource);</span><br><span class="line">        super.setTargetDataSources(targetDataSource);</span><br><span class="line">        super.afterPropertiesSet();</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    protected Object determineCurrentLookupKey() &#123;</span><br><span class="line">        return DB_HOLDER.get();</span><br><span class="line">    &#125;</span><br><span class="line">    public static void setDBType(DBTypeEnum dbType) &#123;</span><br><span class="line">        DB_HOLDER.set(dbType);</span><br><span class="line">    &#125;</span><br><span class="line">    public static DBTypeEnum getDBType() &#123;</span><br><span class="line">        return DB_HOLDER.get();</span><br><span class="line">    &#125;</span><br><span class="line">    public static void clearDBType() &#123;</span><br><span class="line">        DB_HOLDER.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="step3-定义aop"><a href="#step3-定义aop" class="headerlink" title="step3 定义aop"></a>step3 定义aop</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Before(value = &quot;execution(* com.daily.multipledatasource01.repository..*.*(..))&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doBefore</span><span class="params">(JoinPoint joinPoint)</span> </span>&#123;</span><br><span class="line">      Class targetClass = joinPoint.getSignature().getDeclaringType();</span><br><span class="line">      DataSourceType annotation = AnnotationUtils.findAnnotation(targetClass, DataSourceType.class);</span><br><span class="line">      <span class="keyword">if</span> (annotation != <span class="keyword">null</span>) &#123;</span><br><span class="line">          DynamicDataSource.setDBType(annotation.value());</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@After(value = &quot;execution(* com.daily.multipledatasource01.repository..*.*(..))&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doAfter</span><span class="params">(JoinPoint joinPoint)</span> </span>&#123;</span><br><span class="line">      DynamicDataSource.clearDBType();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="step4-代码使用"><a href="#step4-代码使用" class="headerlink" title="step4 代码使用"></a>step4 代码使用</h3><p>父类方法的接口没有切到,所以暂时先写一个新的方法跑通流程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@DataSourceType(DBTypeEnum.LOG)</span><br><span class="line">public interface OrderLogRepository extends Mapper&lt;OrderLog&gt; &#123;</span><br><span class="line">    default int save(OrderLog orderLog) &#123;</span><br><span class="line">        return insert(orderLog);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
       
     </div>
     <footer class="article-footer">
       <a data-url="http://example.com/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F/" data-id="ckhpokh050001sgoe8njv1b8f" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/db/" rel="tag">db</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2020/11/20/typora%E4%BD%BF%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          typora使用
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/11/11/quartz%E4%BD%BF%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%BA%8C-%E5%8C%BA%E5%88%86%E5%8C%85%E6%89%AB%E6%8F%8F%E6%96%B9%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">quartz使用</div>
+      <div class="article-nav-title">双数据源实现方式二-区分包扫描方式</div>
     </a>
   
 </nav>
@@ -130,7 +164,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mq/" rel="tag">mq</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/" rel="tag">quartz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/db/" rel="tag">db</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mq/" rel="tag">mq</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/" rel="tag">quartz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
     </div>
   </div>
 
@@ -140,7 +174,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mq/" style="font-size: 10px;">mq</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/spring/" style="font-size: 20px;">spring</a>
+      <a href="/tags/db/" style="font-size: 15px;">db</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mq/" style="font-size: 10px;">mq</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/spring/" style="font-size: 20px;">spring</a>
     </div>
   </div>
 
@@ -162,11 +196,15 @@
       <ul>
         
           <li>
-            <a href="/2020/11/20/typora%E4%BD%BF%E7%94%A8/">typora使用</a>
+            <a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F/">双数据源实现方式一-注解方式</a>
           </li>
         
           <li>
-            <a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F/">双数据源实现方式一-注解方式</a>
+            <a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%BA%8C-%E5%8C%BA%E5%88%86%E5%8C%85%E6%89%AB%E6%8F%8F%E6%96%B9%E5%BC%8F/">双数据源实现方式二-区分包扫描方式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/11/20/typora%E4%BD%BF%E7%94%A8/">typora使用</a>
           </li>
         
           <li>
@@ -175,10 +213,6 @@
         
           <li>
             <a href="/2020/11/06/ControllerAdvice%E5%A4%B1%E6%95%88/">ControllerAdvice失效</a>
-          </li>
-        
-          <li>
-            <a href="/2020/10/28/springretry/">springretry</a>
           </li>
         
       </ul>
