@@ -1,100 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-
-  
-  <title>log打印时增加链路id | flag than blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前提  在使用分布式项目中,一个用户的一次请求应该是一条链路,当需要查找日志时, 可以根据一个id来将用户在所有子模块中的流程都获取到, 这时候在两个服务之间需要传递这个id(后面称它为tid). 然后在日志打印中将tid输出,elk搜集到后,通过tid就可以查到所有日志;  现在在查看问题的时候发现mq是没有这个tid的,因此自己加入到项目中,便于之后日志查询 熟悉下aopspringboot的">
-<meta property="og:type" content="article">
-<meta property="og:title" content="log打印时增加链路id">
-<meta property="og:url" content="http://example.com/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/index.html">
-<meta property="og:site_name" content="flag than blog">
-<meta property="og:description" content="前提  在使用分布式项目中,一个用户的一次请求应该是一条链路,当需要查找日志时, 可以根据一个id来将用户在所有子模块中的流程都获取到, 这时候在两个服务之间需要传递这个id(后面称它为tid). 然后在日志打印中将tid输出,elk搜集到后,通过tid就可以查到所有日志;  现在在查看问题的时候发现mq是没有这个tid的,因此自己加入到项目中,便于之后日志查询 熟悉下aopspringboot的">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-10-21T10:34:15.000Z">
-<meta property="article:modified_time" content="2020-11-11T15:11:37.469Z">
-<meta property="article:author" content="踩踩">
-<meta property="article:tag" content="spring">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="flag than blog" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  
-<link rel="stylesheet" href="/css/style.css">
-
-<meta name="generator" content="Hexo 5.2.0"></head>
-
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">flag than blog</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main"><article id="post-log打印时增加链路id" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/" class="article-date">
-  <time datetime="2020-10-21T10:34:15.000Z" itemprop="datePublished">2020-10-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      log打印时增加链路id
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><pre><code>  在使用分布式项目中,一个用户的一次请求应该是一条链路,当需要查找日志时,
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>log打印时增加链路id - flag than blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="flag than blog"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="flag than blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="前提  在使用分布式项目中,一个用户的一次请求应该是一条链路,当需要查找日志时, 可以根据一个id来将用户在所有子模块中的流程都获取到, 这时候在两个服务之间需要传递这个id(后面称它为tid). 然后在日志打印中将tid输出,elk搜集到后,通过tid就可以查到所有日志;  现在在查看问题的时候发现mq是没有这个tid的,因此自己加入到项目中,便于之后日志查询"><meta property="og:type" content="blog"><meta property="og:title" content="log打印时增加链路id"><meta property="og:url" content="http://example.com/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/"><meta property="og:site_name" content="flag than blog"><meta property="og:description" content="前提  在使用分布式项目中,一个用户的一次请求应该是一条链路,当需要查找日志时, 可以根据一个id来将用户在所有子模块中的流程都获取到, 这时候在两个服务之间需要传递这个id(后面称它为tid). 然后在日志打印中将tid输出,elk搜集到后,通过tid就可以查到所有日志;  现在在查看问题的时候发现mq是没有这个tid的,因此自己加入到项目中,便于之后日志查询"><meta property="og:locale" content="en_US"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:published_time" content="2020-10-21T10:34:15.000Z"><meta property="article:modified_time" content="2020-11-21T07:54:10.744Z"><meta property="article:author" content="踩踩"><meta property="article:tag" content="spring"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/"},"headline":"flag than blog","image":["http://example.com/img/og_image.png"],"datePublished":"2020-10-21T10:34:15.000Z","dateModified":"2020-11-21T07:54:10.744Z","author":{"@type":"Person","name":"踩踩"},"description":"前提  在使用分布式项目中,一个用户的一次请求应该是一条链路,当需要查找日志时, 可以根据一个id来将用户在所有子模块中的流程都获取到, 这时候在两个服务之间需要传递这个id(后面称它为tid). 然后在日志打印中将tid输出,elk搜集到后,通过tid就可以查到所有日志;  现在在查看问题的时候发现mq是没有这个tid的,因此自己加入到项目中,便于之后日志查询"}</script><link rel="canonical" href="http://example.com/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/cookieconsent/3.1.1/cookieconsent.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="flag than blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2020-10-21T10:34:15.000Z" title="2020-10-21T10:34:15.000Z">2020-10-21</time></span><span class="level-item">Updated&nbsp;<time dateTime="2020-11-21T07:54:10.744Z" title="2020-11-21T07:54:10.744Z">2020-11-21</time></span><span class="level-item">6 minutes read (About 944 words)</span></div></div><h1 class="title is-3 is-size-4-mobile">log打印时增加链路id</h1><div class="content"><h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><pre><code>  在使用分布式项目中,一个用户的一次请求应该是一条链路,当需要查找日志时,
 可以根据一个id来将用户在所有子模块中的流程都获取到,
 这时候在两个服务之间需要传递这个id(后面称它为tid).
 然后在日志打印中将tid输出,elk搜集到后,通过tid就可以查到所有日志;
 
 现在在查看问题的时候发现mq是没有这个tid的,因此自己加入到项目中,便于之后日志查询</code></pre>
+<a id="more"></a>
+
 <h1 id="熟悉下aop"><a href="#熟悉下aop" class="headerlink" title="熟悉下aop"></a>熟悉下aop</h1><h2 id="springboot的版本"><a href="#springboot的版本" class="headerlink" title="springboot的版本"></a>springboot的版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- springboot的版本为</span><br><span class="line">id &#39;org.springframework.boot&#39; version &#39;2.3.2.RELEASE&#39;</span><br><span class="line"></span><br><span class="line">-- aop需要引入</span><br><span class="line">implementation &#39;org.springframework.boot:spring-boot-starter-aop&#39;</span><br></pre></td></tr></table></figure>
 
 <p>开始测试aop各个注解对应的执行顺序</p>
@@ -126,147 +38,48 @@ logback中有一个MDC功能,本质上也是本地线程变量,因此准备直�
 <h3 id="新增日志打印工具类"><a href="#新增日志打印工具类" class="headerlink" title="新增日志打印工具类"></a>新增日志打印工具类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@Slf4j</span><br><span class="line">public class LogUtils &#123;</span><br><span class="line"></span><br><span class="line">    public static BiFunction&lt;Long, Long, Long&gt; takeUpTime &#x3D; (startTime, endTime) -&gt; &#123;</span><br><span class="line">        if (startTime !&#x3D; null &amp;&amp; endTime !&#x3D; null) &#123;</span><br><span class="line">            return endTime - startTime;</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    public static void info(String message, Object requestData, Object responseData) &#123;</span><br><span class="line">        StackTraceElement stackTraceElement &#x3D; Thread.currentThread().getStackTrace()[2];</span><br><span class="line">        log.info(&quot;ClassName: &#123;&#125; ,MethodName: &#123;&#125; , MethodLine: &#123;&#125;, Message: &#123;&#125; , RequestData: &#123;&#125; ,ResponseData: &#123;&#125;&quot;,</span><br><span class="line">                stackTraceElement.getClassName(),</span><br><span class="line">                stackTraceElement.getMethodName(),</span><br><span class="line">                stackTraceElement.getLineNumber(),</span><br><span class="line">                message,</span><br><span class="line">                JSONObject.toJSONString(requestData),</span><br><span class="line">                JSONObject.toJSONString(responseData)</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void info(String message, Object requestData, Object responseData, Long startTime, Long endTime) &#123;</span><br><span class="line">        StackTraceElement stackTraceElement &#x3D; Thread.currentThread().getStackTrace()[2];</span><br><span class="line">        log.info(&quot;ClassName: &#123;&#125; ,MethodName: &#123;&#125; , MethodLine: &#123;&#125; , startTime: &#123;&#125; , takeUpTime: &#123;&#125;&quot; +</span><br><span class="line">                        &quot;, Message: &#123;&#125; , RequestData: &#123;&#125; ,ResponseData: &#123;&#125; &quot;,</span><br><span class="line">                stackTraceElement.getClassName(),</span><br><span class="line">                stackTraceElement.getMethodName(),</span><br><span class="line">                stackTraceElement.getLineNumber(),</span><br><span class="line">                startTime,</span><br><span class="line">                takeUpTime.apply(startTime, endTime),</span><br><span class="line">                message,</span><br><span class="line">                JSONObject.toJSONString(requestData),</span><br><span class="line">                JSONObject.toJSONString(responseData)</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void error(String message, Object requestData, Exception e) &#123;</span><br><span class="line">        StackTraceElement stackTraceElement &#x3D; Thread.currentThread().getStackTrace()[2];</span><br><span class="line">        log.error(&quot;ClassName: &#123;&#125; ,MethodName: &#123;&#125; , MethodLine: &#123;&#125;, Message: &#123;&#125; , RequestData: &#123;&#125; ,ExceptionInfo: &#123;&#125;&quot;,</span><br><span class="line">                stackTraceElement.getClassName(),</span><br><span class="line">                stackTraceElement.getMethodName(),</span><br><span class="line">                stackTraceElement.getLineNumber(),</span><br><span class="line">                message,</span><br><span class="line">                JSONObject.toJSONString(requestData),</span><br><span class="line">                ExceptionUtils.getFullStackTrace(e)</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void error(String message, Object requestData, Long startTime, Long endTime, Exception e) &#123;</span><br><span class="line">        StackTraceElement stackTraceElement &#x3D; Thread.currentThread().getStackTrace()[2];</span><br><span class="line">        log.error(&quot;ClassName: &#123;&#125; ,MethodName: &#123;&#125; , MethodLine: &#123;&#125;, startTime: &#123;&#125; , takeUpTime: &#123;&#125; ,&quot; +</span><br><span class="line">                        &quot; Message: &#123;&#125; , RequestData: &#123;&#125; , ExceptionInfo: &#123;&#125; ,  &quot;,</span><br><span class="line">                stackTraceElement.getClassName(),</span><br><span class="line">                stackTraceElement.getMethodName(),</span><br><span class="line">                stackTraceElement.getLineNumber(),</span><br><span class="line">                message,</span><br><span class="line">                JSONObject.toJSONString(requestData),</span><br><span class="line">                startTime,</span><br><span class="line">                takeUpTime.apply(startTime, endTime),</span><br><span class="line">                ExceptionUtils.getFullStackTrace(e)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
-<h1 id="END"><a href="#END" class="headerlink" title="END"></a>END</h1>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/" data-id="ckglpfcny0000asoe2a0vf4xe" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
-
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/10/28/springretry/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          springretry
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2020/10/15/git/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">git网站</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/db/" rel="tag">db</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mq/" rel="tag">mq</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/" rel="tag">quartz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/db/" style="font-size: 15px;">db</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mq/" style="font-size: 10px;">mq</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/spring/" style="font-size: 20px;">spring</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F/">双数据源实现方式一-注解方式</a>
-          </li>
-        
-          <li>
-            <a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%BA%8C-%E5%8C%BA%E5%88%86%E5%8C%85%E6%89%AB%E6%8F%8F%E6%96%B9%E5%BC%8F/">双数据源实现方式二-区分包扫描方式</a>
-          </li>
-        
-          <li>
-            <a href="/2020/11/20/typora%E4%BD%BF%E7%94%A8/">typora使用</a>
-          </li>
-        
-          <li>
-            <a href="/2020/11/11/quartz%E4%BD%BF%E7%94%A8/">quartz使用</a>
-          </li>
-        
-          <li>
-            <a href="/2020/11/06/ControllerAdvice%E5%A4%B1%E6%95%88/">ControllerAdvice失效</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 踩踩<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
-
-  
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-
-  
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-  </div>
-</body>
-</html>
+<h1 id="END"><a href="#END" class="headerlink" title="END"></a>END</h1></div><div class="article-licensing box"><div class="licensing-title"><p>log打印时增加链路id</p><p><a href="http://example.com/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/">http://example.com/2020/10/21/log%E6%89%93%E5%8D%B0%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%93%BE%E8%B7%AFid/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>Author</h6><p>踩踩</p></div></div><div class="level-item is-narrow"><div><h6>Posted on</h6><p>2020-10-21</p></div></div><div class="level-item is-narrow"><div><h6>Updated on</h6><p>2020-11-21</p></div></div><div class="level-item is-narrow"><div><h6>Licensed under</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/spring/">spring</a></div><div class="notification is-danger">You need to set <code>install_url</code> to use ShareThis. Please set it in <code>_config.yml</code>.</div></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">Like this article? Support the author with</h3><div class="buttons is-centered"><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>Afdian.net</span></a><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>Alipay</span><span class="qrcode"><img src="/" alt="Alipay"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>Buy me a coffee</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><div class="notification is-danger">You forgot to set the <code>business</code> or <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.</div><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>Wechat</span><span class="qrcode"><img src="/" alt="Wechat"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/10/28/springretry/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">springretry</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/10/15/git/"><span class="level-item">git网站</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">Comments</h3><div class="notification is-danger">You forgot to set the <code>shortname</code> for Disqus. Please set it in <code>_config.yml</code>.</div></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/avatar.png" alt="Your name"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Your name</p><p class="is-size-6 is-block">Your title</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Your location</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">Posts</p><a href="/archives"><p class="title">10</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Categories</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Tags</p><a href="/tags"><p class="title">7</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">Follow</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/ppoffice"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://twitter.com"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Dribbble" href="https://dribbble.com"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">Links</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">Recents</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-11-20T10:19:20.000Z">2020-11-20</time></p><p class="title"><a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F/">双数据源实现方式一-注解方式</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-11-20T10:19:20.000Z">2020-11-20</time></p><p class="title"><a href="/2020/11/20/%E5%8F%8C%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%BA%8C-%E5%8C%BA%E5%88%86%E5%8C%85%E6%89%AB%E6%8F%8F%E6%96%B9%E5%BC%8F/">双数据源实现方式二-区分包扫描方式</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-11-20T02:53:23.000Z">2020-11-20</time></p><p class="title"><a href="/2020/11/20/typora%E4%BD%BF%E7%94%A8/">typora使用</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-11-11T15:10:56.000Z">2020-11-11</time></p><p class="title"><a href="/2020/11/11/quartz%E4%BD%BF%E7%94%A8/">quartz使用</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-11-06T09:19:27.000Z">2020-11-06</time></p><p class="title"><a href="/2020/11/06/ControllerAdvice%E5%A4%B1%E6%95%88/">ControllerAdvice失效</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">Archives</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2020/11/"><span class="level-start"><span class="level-item">November 2020</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/10/"><span class="level-start"><span class="level-item">October 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">September 2020</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">Tags</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/db/"><span class="tag">db</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/git/"><span class="tag">git</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/hexo/"><span class="tag">hexo</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mq/"><span class="tag">mq</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/quartz/"><span class="tag">quartz</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/spring/"><span class="tag">spring</span><span class="tag">3</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">Subscribe for updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="Subscribe"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="flag than blog" height="28"></a><p class="is-size-7"><span>&copy; 2020 踩踩</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/cookieconsent/3.1.1/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "This website uses cookies to improve your experience.",
+          dismiss: "Got it!",
+          allow: "Allow cookies",
+          deny: "Decline",
+          link: "Learn more",
+          policy: "Cookie Policy",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script></body></html>
