@@ -2,6 +2,7 @@
 title: hexo
 date: 2020-09-25 14:52:54
 categories: hexo
+toc: true
 ---
 
 hexo学习
@@ -24,3 +25,14 @@ hexo学习
 
 
 
+----
+
+## 主题修改
+
+根据上面的搭建博客后; 因为太丑,因此网上查下哪款主题比较好看
+
+作为一个审美并不强的人,在一个[非官方的统计中](https://github.com/Ailln/awesome-hexo-theme),icarus排名第一我并不是一个特别纠结的人; 在都不认识的情况下,我选择第一名,即时不是最佳,也一定不会差,![img](file:///C:\Users\alan\AppData\Local\Temp\SGPicFaceTpBq\5984\04E1814A.png)
+
+主题并不算复杂;但是有一篇文章写得挺好,可能在版本上有点久(新版本使用的react);但是借鉴意义我感觉特别好
+
+- [Hexo+icarus主题配置](https://blog.csdn.net/marvine/article/details/89816846)

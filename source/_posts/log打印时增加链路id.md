@@ -5,6 +5,7 @@ tags:
 	- aop 
 	- 日志链路追踪
 categories: spring
+toc: true
 ---
 
 为mq服务生成一个trackingNo
@@ -295,9 +296,6 @@ public class LogUtils {
 }
 
 ```
-
-
-# END
 
 
 

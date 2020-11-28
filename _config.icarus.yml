@@ -146,7 +146,7 @@ comment:
     type: valine
     # Disqus shortname
     shortname: ''
-    placeholder: '随便写点啥'
+    placeholder: '随便写点啥.可以自定义昵称的哟'
     verify: true
     notify: true
     app_id: 7wjibsMqX4AsLKbMjYoQK1pe-gzGzoHsz
@@ -226,7 +226,7 @@ widgets:
     # Table of contents widget configurations
     -
         # Where should the widget be placed, left sidebar or right sidebar
-        position: right
+        position: left
         type: toc
         # Whether to show the index of each heading
         index: true

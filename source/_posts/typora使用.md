@@ -41,7 +41,7 @@ end
 
 
 
-### 来一张给我下需求时的时序图
+### 来自我们产品漂亮的时序图
 
 ```mermaid
 sequenceDiagram
