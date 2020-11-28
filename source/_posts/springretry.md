@@ -5,7 +5,7 @@ tags: retry
 categories: spring
 ---
 
-重试有很多方式,但是spring的肯定会比较香吧
+spring出品,必定是精品
 
 <!--more-->
 

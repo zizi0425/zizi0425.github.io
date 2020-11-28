@@ -1,8 +1,7 @@
 ---
 title: hexo
 date: 2020-09-25 14:52:54
-tags: hexo
-categories: blog
+categories: hexo
 ---
 
 hexo学习

@@ -5,7 +5,7 @@ tags: aop
 categories: spring
 ---
 
-jar包和本地冲突
+jar包和本地冲突,不想使用jar包的解决方案
 
 <!--more-->
 

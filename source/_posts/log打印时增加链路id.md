@@ -1,7 +1,9 @@
 ---
 title: log打印时增加链路id
 date: 2020-10-21 18:34:15
-tags: aop
+tags: 
+	- aop 
+	- 日志链路追踪
 categories: spring
 ---
 
